@@ -3,6 +3,7 @@ import './App.css';
 
 function App() {
   const [posts, setPosts] = useState([])
+  const [title, setTitle] = useState([])
   const [comments, setComments] = useState([])
 
   useEffect(() => {
@@ -20,20 +21,27 @@ function App() {
     })()
   }, [])
 
-  // const onSubmitPost = () => {
-  //   // make post request with title
-  //   // fetch posts again 
-  // }
+  const onSubmitPost = (e) => {
+    e.preventDefault()
 
-
+    fetch('http://localhost:3001/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title
+      })
+    })
+  }
 
   return (
     <div className="App">
       <div className="create-post">
         <h1 className="create-post__header">Create Post</h1>
-        <form>
+        <form onSubmit={onSubmitPost}>
           <label className="create-post__label" htmlFor="title">title
-            <input className="create-post__input" type="text"></input>
+            <input onChange={(e) => {setTitle(e.currentTarget.value)}} className="create-post__input" type="text"></input>
             <button className="create-post__submit" type="submit">Submit</button>
           </label>
         </form>
