@@ -1,20 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
+const Post = ({ post }) => {
+  const [comment, setComment] = useState('')
+
+  const onSubmit = () => {
+    fetch(`http://localhost:3002/posts/${post.id}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: {
+        content: JSON.stringify(comment)
+      }
+    })
+  }
+
+  return (
+    <div className="post">
+      <h2 className="post__header">{post.title}</h2>
+      <div className="post__comment-count">{post.comments.length} comments</div>
+      <ul className="post__comments-list">
+        {post.comments.map(comment => <div className="post__comment">{comment.content}</div>)}
+      </ul>
+      <div className="post__comment-form">
+        <form onSubmit={onSubmit}>
+          <label htmlFor="comment-input">
+            <input onChange={e => setComment(e.currentTarget.value)} type="text"></input>
+          </label>
+          <input type="submit" value='Submit'></input>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 function App() {
   const [posts, setPosts] = useState([])
-  const [title, setTitle] = useState([])
-  const [comments, setComments] = useState([])
+  const [title, setTitle] = useState('')
 
   useEffect(() => {
     (async () => {
       try {
         const res = await fetch('http://localhost:3001/posts')
         const posts = await res.json()
-        setPosts(posts)
         
-        const comments = await Promise.all(Object.values(posts).map(post => fetch(`http://localhost:3002/posts/${post.id}/comments`)))
-        setComments(comments)
+        await Promise.all(Object.values(posts).map(post => fetch(`http://localhost:3002/posts/${post.id}/comments`)
+          .then(res => res.json())
+          .then(comments => {
+            console.log(comments)
+            posts[post.id].comments = comments || []
+          })
+          .catch(e => console.error(e))
+        ))
+        setPosts(posts)
       } catch (e) {
         console.log(e)
       }
@@ -46,8 +85,7 @@ function App() {
           </label>
         </form>
       </div>
-      {Object.values(posts).map(post => <div>{post.title}</div>)}
-      {comments.map(comment => <div>{comment.content}</div>)}
+      {Object.values(posts).map(post => <Post post={post} />)}
     </div>
   );
 }
