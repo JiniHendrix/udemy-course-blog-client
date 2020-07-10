@@ -12,8 +12,7 @@ function App() {
         const posts = await res.json()
         setPosts(posts)
         
-        const commentsRes = await Promise.all(posts.map(post => fetch(`http://localhost:3002/posts/${post.id}/comments`)))
-        const comments = await commentsRes.json()
+        const comments = await Promise.all(Object.values(posts).map(post => fetch(`http://localhost:3002/posts/${post.id}/comments`)))
         setComments(comments)
       } catch (e) {
         console.log(e)
@@ -39,7 +38,7 @@ function App() {
           </label>
         </form>
       </div>
-      {posts.map(post => <div>{post.title}</div>)}
+      {Object.values(posts).map(post => <div>{post.title}</div>)}
       {comments.map(comment => <div>{comment.content}</div>)}
     </div>
   );
