@@ -6,7 +6,7 @@ const Post = ({ post }) => {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    fetch(`http://localhost:3002/posts/${post.id}/comments`, {
+    fetch(`http://localhost:4001/posts/${post.id}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -43,10 +43,10 @@ function App() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch('http://localhost:3001/posts')
+        const res = await fetch('http://localhost:4000/posts')
         const posts = await res.json()
         
-        await Promise.all(Object.values(posts).map(post => fetch(`http://localhost:3002/posts/${post.id}/comments`)
+        await Promise.all(Object.values(posts).map(post => fetch(`http://localhost:4001/posts/${post.id}/comments`)
           .then(res => res.json())
           .then(comments => {
             console.log(comments)
@@ -64,7 +64,7 @@ function App() {
   const onSubmitPost = (e) => {
     e.preventDefault()
 
-    fetch('http://localhost:3001/posts', {
+    fetch('http://localhost:4000/posts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
