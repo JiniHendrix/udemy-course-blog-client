@@ -43,17 +43,9 @@ function App() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch('http://localhost:4000/posts')
+        const res = await fetch('http://localhost:4002/posts')
         const posts = await res.json()
         
-        await Promise.all(Object.values(posts).map(post => fetch(`http://localhost:4001/posts/${post.id}/comments`)
-          .then(res => res.json())
-          .then(comments => {
-            console.log(comments)
-            posts[post.id].comments = comments || []
-          })
-          .catch(e => console.error(e))
-        ))
         setPosts(posts)
       } catch (e) {
         console.log(e)
