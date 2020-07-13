@@ -4,15 +4,16 @@ import './App.css';
 const Post = ({ post }) => {
   const [comment, setComment] = useState('')
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault()
     fetch(`http://localhost:3002/posts/${post.id}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: {
-        content: JSON.stringify(comment)
-      }
+      body: JSON.stringify({
+        content: comment
+      })
     })
   }
 
